@@ -4,7 +4,6 @@ type Function struct {
 	absPath string
 	cmdPath string
 	srcPath string
-	//Add License type
 	//license License
 	name string
 }
