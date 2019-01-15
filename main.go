@@ -14,7 +14,7 @@
 
 package main
 
-import "github.com/ciaranRoche/r3x/r3x-cli/cmd"
+import "github.com/rubixFunctions/r3x-cli/cmd"
 
 func main() {
 	cmd.Execute()
