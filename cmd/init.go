@@ -91,10 +91,10 @@ CMD [ "npm", "start" ]`
 
 	createFile(function, jSTemplate, "r3x-func.js")
 	createFile(function, dockerTemplate, "Dockerfile")
-	createPackageJson(function)
+	createPackageJSON(function)
 }
 
-func createPackageJson(function *Function) {
+func createPackageJSON(function *Function) {
 	tempPackageTemplate := `{
 		"name": "{{ .name}}",
 		"version": "0.0.1",
