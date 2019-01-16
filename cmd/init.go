@@ -89,37 +89,44 @@ EXPOSE $PORT
 
 CMD [ "npm", "start" ]`
 
-	tempPackageTemplate := `{
-  "name": "r3x-js-showcase",
-  "version": "0.0.1",
-  "description": "r3x JS Showcase Application",
-  "main": "index.js",
-  "scripts": {
-    "start": "node r3x-func.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/rubixFunctions/r3x-js-showcase.git"
-  },
-  "keywords": [
-    "javascript",
-    "knative"
-  ],
-  "author": "ciaran roche",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/rubixFunctions/r3x-js-showcase/issues"
-  },
-  "homepage": "https://github.com/rubixFunctions/r3x-js-showcase#readme",
-  "dependencies": {
-    "@rubixfunctions/r3x-js-sdk": "0.0.2"
-  }
-}
-`
-
 	createFile(function, jSTemplate, "r3x-func.js")
 	createFile(function, dockerTemplate, "Dockerfile")
-	createFile(function, tempPackageTemplate, "package.json")
+	createPackageJson(function)
+}
+
+func createPackageJson(function *Function) {
+	tempPackageTemplate := `{
+		"name": "{{ .name}}",
+		"version": "0.0.1",
+		"description": "r3x Knative Function",
+		"main": "r3x-func.js",
+		"scripts": {
+		  "start": "node r3x-func.js"
+		},
+		"keywords": [
+		  "javascript",
+		  "knative",
+		  "kubernetes",
+		  "serverless"
+		],
+		"dependencies": {
+		  "@rubixfunctions/r3x-js-sdk": "0.0.2"
+		}
+	  }
+	  `
+
+	data := make(map[string]interface{})
+	data["name"] = function.name
+
+	rootCmdScript, err := executeTemplate(tempPackageTemplate, data)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	err = writeStringToFile(filepath.Join(function.AbsPath(), "package.json"), rootCmdScript)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func init() {
