@@ -59,35 +59,6 @@ func trimSrcPath(absPath, srcPath string) string {
 	return relPath
 }
 
-func findCmdDir(absPath string) string {
-	if !exists(absPath) || isEmpty(absPath) {
-		return "cmd"
-	}
-
-	if isCmdDir(absPath) {
-		return filepath.Base(absPath)
-	}
-
-	files, _ := filepath.Glob(filepath.Join(absPath, "c*"))
-	for _, file := range files {
-		if isCmdDir(file) {
-			return filepath.Base(file)
-		}
-	}
-
-	return "cmd"
-}
-
-func isCmdDir(name string) bool {
-	name = filepath.Base(name)
-	for _, cmdDir := range []string{"cmd", "cmds", "command", "commands"} {
-		if name == cmdDir {
-			return true
-		}
-	}
-	return false
-}
-
 // AbsPath returns Functions absolute path
 func (f Function) AbsPath() string {
 	return f.absPath

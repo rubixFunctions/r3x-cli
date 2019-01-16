@@ -64,6 +64,62 @@ func initializeFunction(function *Function) {
 	} else if !isEmpty(function.AbsPath()) {
 		fmt.Println("Function can not be bootstrapped in a non empty direcctory: " + function.AbsPath())
 	}
+
+	//createJavaScriptFile(function)
+	jSTemplate := `const r3x = require('@rubixfunctions/r3x-js-sdk/build/src/r3x')
+
+let schema
+r3x.execute(function(){
+	let response = {'message' : 'Hello r3x function'}
+	return response 
+}, schema)`
+
+	dockerTemplate := `FROM node:alpine
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install --only=production
+
+COPY . .
+
+ENV PORT 8080
+EXPOSE $PORT
+
+CMD [ "npm", "start" ]`
+
+	tempPackageTemplate := `{
+  "name": "r3x-js-showcase",
+  "version": "0.0.1",
+  "description": "r3x JS Showcase Application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node r3x-func.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rubixFunctions/r3x-js-showcase.git"
+  },
+  "keywords": [
+    "javascript",
+    "knative"
+  ],
+  "author": "ciaran roche",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/rubixFunctions/r3x-js-showcase/issues"
+  },
+  "homepage": "https://github.com/rubixFunctions/r3x-js-showcase#readme",
+  "dependencies": {
+    "@rubixfunctions/r3x-js-sdk": "0.0.2"
+  }
+}
+`
+
+	createFile(function, jSTemplate, "r3x-func.js")
+	createFile(function, dockerTemplate, "Dockerfile")
+	createFile(function, tempPackageTemplate, "package.json")
 }
 
 func init() {
