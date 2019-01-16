@@ -27,7 +27,7 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "RubiX CLI",
+	Use:   "r3x",
 	Short: "Creating Functions as a Container",
 	Long: `
 RubiX CLI allows for the creation of Functions as a Container.

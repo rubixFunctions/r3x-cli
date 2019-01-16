@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -41,12 +42,16 @@ Init will not use an existing directory with contents.`,
 
 		var function *Function
 		if len(args) == 0 {
-			function = NewFunctionFromPath(wd)
+			fmt.Println("Function name needed")
+		} else if len(args) == 1 {
+			arg := args[0]
+			if arg[0] == '.' {
+				arg = filepath.Join(wd, arg)
+			}
+			function = NewFunction(arg)
+			initializeFunction(function)
+			fmt.Println(`Your Function is ready at` + function.AbsPath())
 		}
-
-		initializeFunction(function)
-		fmt.Println("init called ", wd)
-
 	},
 }
 
