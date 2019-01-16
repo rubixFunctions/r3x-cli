@@ -56,7 +56,14 @@ Init will not use an existing directory with contents.`,
 }
 
 func initializeFunction(function *Function) {
-
+	if !exists(function.AbsPath()) {
+		err := os.MkdirAll(function.AbsPath(), os.ModePerm)
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else if !isEmpty(function.AbsPath()) {
+		fmt.Println("Function can not be bootstrapped in a non empty direcctory: " + function.AbsPath())
+	}
 }
 
 func init() {

@@ -48,7 +48,6 @@ func NewFunction(functionName string) *Function {
 		f.absPath = filepath.Join(wd, functionName)
 	}
 
-	fmt.Println(f)
 	return f
 }
 
