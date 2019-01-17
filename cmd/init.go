@@ -25,7 +25,7 @@ import (
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{
-	Use:     "init [name]",
+	Use:     "init [function name]",
 	Aliases: []string{"initialize", "initialise", "create"},
 	Short:   "Initialize a Function as a Container",
 	Long: `Initialize (r3x init) will create a new Function as a container, 
@@ -40,17 +40,26 @@ Init will not use an existing directory with contents.`,
 			log.Print(err)
 		}
 
-		var function *Function
-		if len(args) == 0 {
-			fmt.Println("Function name needed")
-		} else if len(args) == 1 {
-			arg := args[0]
-			if arg[0] == '.' {
-				arg = filepath.Join(wd, arg)
+		name := cmd.Flag("type").Value.String()
+		switch name {
+		case "js":
+			var function *Function
+			if len(args) == 0 {
+				fmt.Println("Function name needed")
+			} else if len(args) == 1 {
+				arg := args[0]
+				if arg[0] == '.' {
+					arg = filepath.Join(wd, arg)
+				}
+				function = NewFunction(arg)
+				initializeFunction(function)
+				fmt.Println(`Your Function is ready at` + function.AbsPath())
 			}
-			function = NewFunction(arg)
-			initializeFunction(function)
-			fmt.Println(`Your Function is ready at` + function.AbsPath())
+		default:
+			fmt.Println(`Function type required, use '-t' flag
+
+Supported paradigms :
+	- JavaScript : '-t js'`)
 		}
 	},
 }
@@ -65,7 +74,6 @@ func initializeFunction(function *Function) {
 		fmt.Println("Function can not be bootstrapped in a non empty direcctory: " + function.AbsPath())
 	}
 
-	//createJavaScriptFile(function)
 	jSTemplate := `const r3x = require('@rubixfunctions/r3x-js-sdk/build/src/r3x')
 
 let schema
