@@ -58,6 +58,7 @@ func init() {
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 	initCmd.Flags().StringP("type", "t", "", "function type")
+	initCmd.Flags().StringP("license", "l", "", "License")
 }
 
 // initConfig reads in config file and ENV variables if set.

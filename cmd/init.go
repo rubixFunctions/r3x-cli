@@ -19,6 +19,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -35,33 +36,55 @@ with a license and the appropriate structure needed for a Knative Function.
 	
 Init will not use an existing directory with contents.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		wd, err := os.Getwd()
-		if err != nil {
-			log.Print(err)
-		}
 
-		name := cmd.Flag("type").Value.String()
-		switch name {
-		case "js":
-			var function *Function
-			if len(args) == 0 {
-				fmt.Println("Function name needed")
-			} else if len(args) == 1 {
-				arg := args[0]
-				if arg[0] == '.' {
-					arg = filepath.Join(wd, arg)
-				}
-				function = NewFunction(arg)
-				initializeFunction(function)
-				fmt.Println(`Your Function is ready at` + function.AbsPath())
+		license := cmd.Flag("license").Value.String()
+		if len(license) == 0 {
+			initializeInitCmd(cmd, args)
+		} else {
+			if findLicense(license) == true {
+				initializeInitCmd(cmd, args)
+				initializeLicense(license)
+			} else {
+				fmt.Println(`License choice not supported
+				
+	Supported Licenses :
+		`, strings.Join(KnownLicenses, ", "))
 			}
-		default:
-			fmt.Println(`Function type required, use '-t' flag
-
-Supported paradigms :
-	- JavaScript : '-t js'`)
 		}
 	},
+}
+
+func initializeInitCmd(cmd *cobra.Command, args []string) {
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Print(err)
+	}
+
+	name := cmd.Flag("type").Value.String()
+	switch name {
+	case "js":
+		var function *Function
+		if len(args) == 0 {
+			fmt.Println("Function name needed")
+		} else if len(args) == 1 {
+			arg := args[0]
+			if arg[0] == '.' {
+				arg = filepath.Join(wd, arg)
+			}
+			function = NewFunction(arg)
+			initializeFunction(function)
+			fmt.Println(`Your Function is ready at` + function.AbsPath())
+		}
+	default:
+		fmt.Println(`Function type required, use '-t' flag
+	
+	Supported paradigms :
+		- JavaScript : '-t js'`)
+	}
+}
+
+func initializeLicense(license string) {
+
 }
 
 func initializeFunction(function *Function) {
