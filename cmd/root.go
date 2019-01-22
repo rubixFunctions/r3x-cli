@@ -1,4 +1,4 @@
-// Copyright © 2019 NAME HERE RubiXFunctions
+// Copyright © 2019 RubiXFunctions
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "RubiX CLI",
+	Use:   "r3x",
 	Short: "Creating Functions as a Container",
 	Long: `
 RubiX CLI allows for the creation of Functions as a Container.
@@ -56,6 +56,9 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	initCmd.Flags().StringP("type", "t", "", "function type")
+	initCmd.Flags().StringP("license", "l", "", "License")
 }
 
 // initConfig reads in config file and ENV variables if set.
