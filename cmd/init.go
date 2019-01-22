@@ -36,55 +36,44 @@ with a license and the appropriate structure needed for a Knative Function.
 	
 Init will not use an existing directory with contents.`,
 	Run: func(cmd *cobra.Command, args []string) {
-
+		// get flag values
 		license := cmd.Flag("license").Value.String()
-		if len(license) == 0 {
-			initializeInitCmd(cmd, args)
+		name := cmd.Flag("type").Value.String()
+
+		if findLicense(license) == true || len(license) == 0 {
+			wd, err := os.Getwd()
+			if err != nil {
+				log.Print(err)
+			}
+			switch name {
+			case "js":
+				var function *Function
+				if len(args) == 0 {
+					fmt.Println("Function name needed")
+				} else if len(args) == 1 {
+					arg := args[0]
+					if arg[0] == '.' {
+						arg = filepath.Join(wd, arg)
+					}
+					function = NewFunction(arg)
+					function.license.Name = license
+					initializeFunction(function)
+					fmt.Println(`Your Function is ready at` + function.AbsPath())
+				}
+			default:
+				fmt.Println(`Function type required, use '-t' flag
+			
+			Supported paradigms :
+				- JavaScript : '-t js'`)
+			}
 		} else {
-			if findLicense(license) == true {
-				initializeInitCmd(cmd, args)
-				initializeLicense(license)
-			} else {
-				fmt.Println(`License choice not supported
+			fmt.Println(`License choice not supported
 				
 	Supported Licenses :
 		`, strings.Join(KnownLicenses, ", "))
-			}
 		}
+
 	},
-}
-
-func initializeInitCmd(cmd *cobra.Command, args []string) {
-	wd, err := os.Getwd()
-	if err != nil {
-		log.Print(err)
-	}
-
-	name := cmd.Flag("type").Value.String()
-	switch name {
-	case "js":
-		var function *Function
-		if len(args) == 0 {
-			fmt.Println("Function name needed")
-		} else if len(args) == 1 {
-			arg := args[0]
-			if arg[0] == '.' {
-				arg = filepath.Join(wd, arg)
-			}
-			function = NewFunction(arg)
-			initializeFunction(function)
-			fmt.Println(`Your Function is ready at` + function.AbsPath())
-		}
-	default:
-		fmt.Println(`Function type required, use '-t' flag
-	
-	Supported paradigms :
-		- JavaScript : '-t js'`)
-	}
-}
-
-func initializeLicense(license string) {
-
 }
 
 func initializeFunction(function *Function) {
@@ -123,6 +112,29 @@ CMD [ "npm", "start" ]`
 	createFile(function, jSTemplate, "r3x-func.js")
 	createFile(function, dockerTemplate, "Dockerfile")
 	createPackageJSON(function)
+	createLicense(function)
+}
+
+func createLicense(function *Function) {
+	var name = function.license.Name
+
+	if name == "" {
+		name = "Apache-2.0"
+	}
+
+	var lic = getLicense(name)
+
+	data := make(map[string]interface{})
+	rootCmdScript, err := executeTemplate(lic.Text, data)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	err = writeStringToFile(filepath.Join(function.AbsPath(), "LICENSE"), rootCmdScript)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 }
 
 func createPackageJSON(function *Function) {

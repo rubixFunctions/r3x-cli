@@ -27,8 +27,8 @@ type Function struct {
 	absPath string
 	cmdPath string
 	srcPath string
-	//license License
-	name string
+	license License
+	name    string
 }
 
 // NewFunction Returns Function with a specified function name
