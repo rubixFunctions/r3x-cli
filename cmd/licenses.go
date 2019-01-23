@@ -37,6 +37,7 @@ func init() {
 	initGpl3()
 	initCDDL()
 	initEclipse()
+	initISC()
 }
 
 func getLicense(name string) License {
