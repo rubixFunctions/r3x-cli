@@ -17,17 +17,7 @@ import (
 	"strings"
 )
 
-const (
-	LicenseMIT      = "MIT"
-	LicenseApache20 = "Apache-2.0"
-)
-
 var Licenses = make(map[string]License)
-
-var KnownLicenses = []string{
-	LicenseMIT,
-	LicenseApache20,
-}
 
 type License struct {
 	Name            string
@@ -38,6 +28,16 @@ type License struct {
 func init() {
 	initApache2()
 	initMit()
+	initNone()
+	initLgpl()
+	initAgpl()
+	initBsdClause2()
+	initBsdClause3()
+	initGpl2()
+	initGpl3()
+	initCDDL()
+	initEclipse()
+	initISC()
 }
 
 func getLicense(name string) License {
@@ -63,18 +63,22 @@ func getKey(name string) string {
 }
 
 func findLicense(name string) bool {
-	// save knownlicenses to map
-	l := make(map[string]bool)
-	for i := 0; i < len(KnownLicenses); i++ {
-		l[KnownLicenses[i]] = true
-	}
-	// check is license exists
-	if _, ok := l[name]; ok {
-		return true
+	for _, l := range Licenses {
+		for _, match := range l.PossibleMatches {
+			if strings.EqualFold(name, match) {
+				return true
+			}
+		}
 	}
 	return false
 }
 
-// func matchLicense(name string) string {
-
-// }
+func getPossibleMatches() []string {
+	var PossibleMatchesList []string
+	for _, l := range Licenses {
+		for _, m := range l.PossibleMatches {
+			PossibleMatchesList = append(PossibleMatchesList, m)
+		}
+	}
+	return PossibleMatchesList
+}

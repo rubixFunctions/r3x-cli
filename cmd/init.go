@@ -67,10 +67,10 @@ Init will not use an existing directory with contents.`,
 				- JavaScript : '-t js'`)
 			}
 		} else {
-			fmt.Println(`License choice not supported
+			fmt.Println(`License choice not recognized.
 				
-	Supported Licenses :
-		`, strings.Join(KnownLicenses, ", "))
+Please insure license choice matches the following:
+		`, strings.Join(getPossibleMatches(), ", "))
 		}
 
 	},
@@ -124,17 +124,18 @@ func createLicense(function *Function) {
 
 	var lic = getLicense(name)
 
-	data := make(map[string]interface{})
-	rootCmdScript, err := executeTemplate(lic.Text, data)
-	if err != nil {
-		fmt.Println(err)
-	}
+	if lic.Text != "" {
+		data := make(map[string]interface{})
+		rootCmdScript, err := executeTemplate(lic.Text, data)
+		if err != nil {
+			fmt.Println(err)
+		}
 
-	err = writeStringToFile(filepath.Join(function.AbsPath(), "LICENSE"), rootCmdScript)
-	if err != nil {
-		fmt.Println(err)
+		err = writeStringToFile(filepath.Join(function.AbsPath(), "LICENSE"), rootCmdScript)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
-
 }
 
 func createPackageJSON(function *Function) {

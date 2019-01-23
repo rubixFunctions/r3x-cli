@@ -32,6 +32,10 @@ $ r3x init hello-function --type js
 ```
 $ r3x init hello-function --type js --license MIT
 ```
+Alternativly you can initalize a function with no License by :
+```
+$ r3x init hello-function --type js --license none
+```
 
 ## License
 This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details
