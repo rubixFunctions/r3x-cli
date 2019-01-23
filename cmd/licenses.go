@@ -20,6 +20,7 @@ import (
 const (
 	LicenseMIT      = "MIT"
 	LicenseApache20 = "Apache-2.0"
+	LicenseNone     = "none"
 )
 
 var Licenses = make(map[string]License)
@@ -27,6 +28,7 @@ var Licenses = make(map[string]License)
 var KnownLicenses = []string{
 	LicenseMIT,
 	LicenseApache20,
+	LicenseNone,
 }
 
 type License struct {
@@ -38,6 +40,7 @@ type License struct {
 func init() {
 	initApache2()
 	initMit()
+	initNone()
 }
 
 func getLicense(name string) License {

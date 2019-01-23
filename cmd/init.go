@@ -124,17 +124,18 @@ func createLicense(function *Function) {
 
 	var lic = getLicense(name)
 
-	data := make(map[string]interface{})
-	rootCmdScript, err := executeTemplate(lic.Text, data)
-	if err != nil {
-		fmt.Println(err)
-	}
+	if lic.Text != "" {
+		data := make(map[string]interface{})
+		rootCmdScript, err := executeTemplate(lic.Text, data)
+		if err != nil {
+			fmt.Println(err)
+		}
 
-	err = writeStringToFile(filepath.Join(function.AbsPath(), "LICENSE"), rootCmdScript)
-	if err != nil {
-		fmt.Println(err)
+		err = writeStringToFile(filepath.Join(function.AbsPath(), "LICENSE"), rootCmdScript)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
-
 }
 
 func createPackageJSON(function *Function) {
