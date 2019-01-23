@@ -30,6 +30,7 @@ func init() {
 	initMit()
 	initNone()
 	initLgpl()
+	initAgpl()
 	initBsdClause2()
 	initBsdClause3()
 	initGpl2()
