@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Parts inspired by https://github.com/ryanuber/go-license && https://github.com/spf13/cobra
+// Parts inspired by https://github.com/ryanuber/go-license
 
 package cmd
 
@@ -263,7 +263,7 @@ func initApache2() {
 func initLgpl() {
 	Licenses["lgpl"] = License{
 		Name:            "GNU Lesser General Public License",
-		PossibleMatches: []string{"lgpl", "lesser gpl", "gnu lgpl"},
+		PossibleMatches: []string{"lgpl", "lesser gpl", "gnu lgpl", "gnu-lgpl"},
 		Text: `                   GNU LESSER GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
  Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
@@ -392,5 +392,33 @@ whether future versions of the GNU Lesser General Public License shall
 apply, that proxy's public statement of acceptance of any version is
 permanent authorization for you to choose that version for the
 Library.`,
+	}
+}
+
+func initBsdClause2() {
+	Licenses["freebsd"] = License{
+		Name: "Simplified BSD License",
+		PossibleMatches: []string{"freebsd", "simpbsd", "simple bsd", "2-clause bsd",
+			"2 clause bsd", "simplified bsd license"},
+		Text: `{{ .copyright }}
+All rights reserved.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+1. Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+`,
 	}
 }

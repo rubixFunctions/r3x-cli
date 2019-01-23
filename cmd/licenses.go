@@ -29,6 +29,8 @@ func init() {
 	initApache2()
 	initMit()
 	initNone()
+	initLgpl()
+	initBsdClause2()
 }
 
 func getLicense(name string) License {
