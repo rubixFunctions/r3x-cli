@@ -67,10 +67,10 @@ Init will not use an existing directory with contents.`,
 				- JavaScript : '-t js'`)
 			}
 		} else {
-			fmt.Println(`License choice not supported
+			fmt.Println(`License choice not recognized.
 				
-	Supported Licenses :
-		`, strings.Join(KnownLicenses, ", "))
+Please insure license choice matches the following:
+		`, strings.Join(getPossibleMatches(), ", "))
 		}
 
 	},
