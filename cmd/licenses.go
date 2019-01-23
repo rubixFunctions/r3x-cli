@@ -33,6 +33,7 @@ func init() {
 	initBsdClause2()
 	initBsdClause3()
 	initGpl2()
+	initGpl3()
 }
 
 func getLicense(name string) License {
