@@ -31,6 +31,7 @@ func init() {
 	initNone()
 	initLgpl()
 	initBsdClause2()
+	initBsdClause3()
 }
 
 func getLicense(name string) License {
