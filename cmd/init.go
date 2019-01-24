@@ -86,7 +86,7 @@ func initializeFunction(function *Function) {
 		fmt.Println("Function can not be bootstrapped in a non empty direcctory: " + function.AbsPath())
 	}
 
-	jSTemplate := `const r3x = require('@rubixfunctions/r3x-js-sdk/build/src/r3x')
+	jSTemplate := `const r3x = require('@rubixfunctions/r3x-js-sdk/dist/src/r3x')
 
 let schema
 r3x.execute(function(){
@@ -154,7 +154,7 @@ func createPackageJSON(function *Function) {
 		  "serverless"
 		],
 		"dependencies": {
-		  "@rubixfunctions/r3x-js-sdk": "0.0.2"
+		  "@rubixfunctions/r3x-js-sdk": "0.0.7"
 		}
 	  }
 	  `
