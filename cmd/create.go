@@ -15,9 +15,14 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
-
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/client"
+	"github.com/jhoonb/archivex"
 	"github.com/spf13/cobra"
+	"io/ioutil"
+	"os"
 )
 
 // createCmd represents the create command
@@ -29,11 +34,46 @@ Build a RubiX Function as a Container Image.
 The Image will be pushed to a specified registery
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("create called")
+		create()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(createCmd)
 
+}
+
+
+func create() {
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	tar := new(archivex.TarFile)
+	_ = tar.Create(wd + "/archieve.tar")
+	_ = tar.AddAll(wd, false)
+	_ = tar.Close()
+	dockerBuildContext, err := os.Open(wd + "/archieve.tar")
+	defer dockerBuildContext.Close()
+	defaultHeaders := map[string]string{"User-Agent": "ego-v-0.0.1"}
+	cli, _ := client.NewClient("unix:///var/run/docker.sock", "v1.24", nil, defaultHeaders)
+	options := types.ImageBuildOptions{
+		SuppressOutput: false,
+		Remove:         true,
+		ForceRemove:    true,
+		// hard coded tag, till schema is added to sdk
+		Tags:			[]string{"r3x-function"},
+		PullParent:     true}
+	buildResponse, err := cli.ImageBuild(context.Background(), dockerBuildContext, options)
+	if err != nil {
+		fmt.Printf("%s", err.Error())
+	}
+	fmt.Println("  Build Image has Started ")
+	fmt.Printf("********* %s **********", buildResponse.OSType)
+
+	response, err := ioutil.ReadAll(buildResponse.Body)
+	if err != nil {
+		fmt.Printf("%s", err.Error())
+	}
+	fmt.Println(string(response))
 }
