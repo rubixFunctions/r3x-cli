@@ -14,12 +14,17 @@
 
 package cmd
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+)
 
 type Schema struct {
-	name     string
-	funcType string
-	response string
+	Name     string `json:"name"`
+	FuncType string `json:"funcType"`
+	Response string `json:"response"`
 }
 
 // NewSchema Returns Schema with a specified function name
@@ -33,12 +38,34 @@ func NewSchema(functionName string, funcType string, response string) *Schema {
 	s := new(Schema)
 
 	if response == "" {
-		s.response = "JSON"
+		s.Response = "JSON"
 	}
 
-	s.response = response
-	s.name = functionName
-	s.funcType = funcType
+	s.Response = response
+	s.Name = functionName
+	s.FuncType = funcType
 
 	return s
+}
+
+func LoadSchema() Schema {
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Print(err)
+	}
+	file := wd + "/schema.json"
+	fmt.Println(file)
+
+	var schema Schema
+	schemaFile, err := os.Open(file)
+	defer schemaFile.Close()
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	jsonParser := json.NewDecoder(schemaFile)
+	jsonParser.Decode(&schema)
+
+	return schema
 }

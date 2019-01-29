@@ -120,9 +120,9 @@ CMD [ "npm", "start" ]`
 
 func createSchema(schema *Schema, function *Function){
 	data := make(map[string]interface{})
-	data["name"] = schema.name
-	data["funcType"] = schema.funcType
-	data["response"] = schema.response
+	data["name"] = schema.Name
+	data["funcType"] = schema.FuncType
+	data["response"] = schema.Response
 	var schemaJson = `{
 "name" : "{{.name}}",
 "funcType" : "{{.funcType}}",
