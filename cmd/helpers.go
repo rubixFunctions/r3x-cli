@@ -17,12 +17,23 @@ package cmd
 import (
 	"bytes"
 	"fmt"
+	"github.com/spf13/cobra"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
 )
+
+func hasTags(cmd *cobra.Command) bool {
+	for curr := cmd; curr != nil; curr = curr.Parent() {
+		if len(curr.Annotations) > 0 {
+			return true
+		}
+	}
+
+	return false
+}
 
 func exists(path string) bool {
 	if path == "" {
