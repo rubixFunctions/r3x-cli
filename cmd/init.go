@@ -57,7 +57,9 @@ Init will not use an existing directory with contents.`,
 					}
 					function = NewFunction(arg)
 					function.license.Name = license
-					initializeFunction(function)
+					var schema *Schema
+					schema = NewSchema(arg, "js", "")
+					initializeFunction(function, schema)
 					fmt.Println(`Your Function is ready at` + function.AbsPath())
 				}
 			default:
@@ -76,7 +78,7 @@ Please insure license choice matches the following:
 	},
 }
 
-func initializeFunction(function *Function) {
+func initializeFunction(function *Function ,schema *Schema) {
 	if !exists(function.AbsPath()) {
 		err := os.MkdirAll(function.AbsPath(), os.ModePerm)
 		if err != nil {
@@ -113,6 +115,30 @@ CMD [ "npm", "start" ]`
 	createFile(function, dockerTemplate, "Dockerfile")
 	createPackageJSON(function)
 	createLicense(function)
+	createSchema(schema, function)
+}
+
+func createSchema(schema *Schema, function *Function){
+	data := make(map[string]interface{})
+	data["name"] = schema.Name
+	data["funcType"] = schema.FuncType
+	data["response"] = schema.Response
+	var schemaJson = `{
+"name" : "{{.name}}",
+"funcType" : "{{.funcType}}",
+"response" : "{{.response}}"
+}`
+
+	rootCmdScript, err := executeTemplate(schemaJson, data)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	err = writeStringToFile(filepath.Join(function.AbsPath(), "schema.json"), rootCmdScript)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 }
 
 func createLicense(function *Function) {
