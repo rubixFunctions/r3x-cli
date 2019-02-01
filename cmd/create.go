@@ -16,6 +16,8 @@ package cmd
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"github.com/docker/docker/pkg/jsonmessage"
 	"github.com/docker/docker/pkg/term"
@@ -94,7 +96,28 @@ func create(push bool) {
 	jsonmessage.DisplayJSONMessagesStream(buildResponse.Body, os.Stderr, termFd, isTerm, nil)
 
 	if push {
-		//todo
+		authString :=  types.AuthConfig{
+			Username: "<<name>>",
+			Password: "<<password>>",
+			Email: "<<email>>",
+		}
+		encodedJSON, err := json.Marshal(authString)
+		if err != nil {
+			panic(err)
+		}
+		authStr := base64.URLEncoding.EncodeToString(encodedJSON)
+
+		pushOptions := types.ImagePushOptions{
+			RegistryAuth: authStr,
+		}
+
+		pushResponse, err := cli.ImagePush(context.Background(), "<<name>>/"+funcName, pushOptions)
+		if err != nil {
+			fmt.Printf("%s", err.Error())
+		}
+		fmt.Println("Pushing Image has Started")
+		termFD, isTErm := term.GetFdInfo(os.Stderr)
+		jsonmessage.DisplayJSONMessagesStream(pushResponse, os.Stderr, termFD, isTErm, nil)
 	}
 
 
