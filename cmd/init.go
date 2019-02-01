@@ -58,7 +58,7 @@ Init will not use an existing directory with contents.`,
 					function = NewFunction(arg)
 					function.license.Name = license
 					var schema *Schema
-					schema = NewSchema(arg, "js", "")
+					schema = NewSchema("r3x-"+arg, "js", "")
 					initializeFunction(function, schema)
 					fmt.Println(`Your Function is ready at` + function.AbsPath())
 				}
@@ -100,11 +100,9 @@ r3x.execute(function(){
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY . .
 
 RUN npm install --only=production
-
-COPY . .
 
 ENV PORT 8080
 EXPOSE $PORT
