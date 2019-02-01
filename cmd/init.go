@@ -58,7 +58,7 @@ Init will not use an existing directory with contents.`,
 					function = NewFunction(arg)
 					function.license.Name = license
 					var schema *Schema
-					schema = NewSchema(arg, "js", "")
+					schema = NewSchema("r3x-"+arg, "js", "")
 					initializeFunction(function, schema)
 					fmt.Println(`Your Function is ready at` + function.AbsPath())
 				}

@@ -17,12 +17,13 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
+	"os"
+
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	"github.com/jhoonb/archivex"
 	"github.com/spf13/cobra"
-	"io/ioutil"
-	"os"
 )
 
 // createCmd represents the create command
@@ -43,11 +44,15 @@ func init() {
 
 }
 
-
 func create() {
 	wd, err := os.Getwd()
 	if err != nil {
 		panic(err)
+	}
+	funcName := getName()
+	if funcName == "" {
+		panic("A function needs a name")
+		return
 	}
 	tar := new(archivex.TarFile)
 	_ = tar.Create(wd + "/archieve.tar")
@@ -62,8 +67,8 @@ func create() {
 		Remove:         true,
 		ForceRemove:    true,
 		// hard coded tag, till schema is added to sdk
-		Tags:			[]string{"r3x-function"},
-		PullParent:     true}
+		Tags:       []string{funcName},
+		PullParent: true}
 	buildResponse, err := cli.ImageBuild(context.Background(), dockerBuildContext, options)
 	if err != nil {
 		fmt.Printf("%s", err.Error())
@@ -76,4 +81,8 @@ func create() {
 		fmt.Printf("%s", err.Error())
 	}
 	fmt.Println(string(response))
+}
+
+func getName() string {
+	return LoadSchema().Name
 }
