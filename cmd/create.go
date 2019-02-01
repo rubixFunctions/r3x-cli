@@ -17,7 +17,8 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"github.com/docker/docker/pkg/jsonmessage"
+	"github.com/docker/docker/pkg/term"
 	"os"
 
 	"github.com/docker/docker/api/types"
@@ -73,16 +74,10 @@ func create() {
 	if err != nil {
 		fmt.Printf("%s", err.Error())
 	}
-	fmt.Println("  Build Image has Started ")
-	fmt.Printf("********* %s **********", buildResponse.OSType)
-
-	response, err := ioutil.ReadAll(buildResponse.Body)
-	if err != nil {
-		fmt.Printf("%s", err.Error())
-	}
-	fmt.Println(string(response))
+	fmt.Println("Build Image has Started ")
+	termFd, isTerm := term.GetFdInfo(os.Stderr)
+	jsonmessage.DisplayJSONMessagesStream(buildResponse.Body, os.Stderr, termFd, isTerm, nil)
 }
-
 func getName() string {
 	return LoadSchema().Name
 }
