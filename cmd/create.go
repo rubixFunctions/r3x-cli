@@ -63,13 +63,21 @@ func create(push bool) {
 		return
 	}
 	tar := new(archivex.TarFile)
-	_ = tar.Create(wd + "/archieve.tar")
-	_ = tar.AddAll(wd, false)
-	_ = tar.Close()
-	dockerBuildContext, err := os.Open(wd + "/archieve.tar")
+	err = tar.Create("/tmp/archieve.tar")
+	if  err != nil {
+		panic(err)
+	}
+	err = tar.AddAll(wd, false)
+	if err != nil {
+		panic(err)
+	}
+	err = tar.Close()
+	if err != nil {
+		panic(err)
+	}
+	dockerBuildContext, err := os.Open("/tmp/archieve.tar")
 	defer dockerBuildContext.Close()
-	defaultHeaders := map[string]string{"User-Agent": "ego-v-0.0.1"}
-	cli, _ := client.NewClient("unix:///var/run/docker.sock", "v1.24", nil, defaultHeaders)
+	cli, _ := client.NewClientWithOpts(client.FromEnv)
 	options := types.ImageBuildOptions{
 		SuppressOutput: false,
 		Remove:         true,
@@ -86,7 +94,7 @@ func create(push bool) {
 	jsonmessage.DisplayJSONMessagesStream(buildResponse.Body, os.Stderr, termFd, isTerm, nil)
 
 	if push {
-		// todo add push logic
+		//todo
 	}
 
 
