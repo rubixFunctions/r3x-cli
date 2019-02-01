@@ -36,16 +36,23 @@ Build a RubiX Function as a Container Image.
 The Image will be pushed to a specified registery
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		create()
+		push, err := cmd.Flags().GetBool("push")
+		if err != nil{
+			panic(err)
+		}
+		create(push)
+
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(createCmd)
 
+	createCmd.Flags().BoolP("push", "p", false, "Push Image")
+
 }
 
-func create() {
+func create(push bool) {
 	wd, err := os.Getwd()
 	if err != nil {
 		panic(err)
@@ -77,7 +84,16 @@ func create() {
 	fmt.Println("Build Image has Started ")
 	termFd, isTerm := term.GetFdInfo(os.Stderr)
 	jsonmessage.DisplayJSONMessagesStream(buildResponse.Body, os.Stderr, termFd, isTerm, nil)
+
+	if push {
+		// todo add push logic
+	}
+
+
 }
+
 func getName() string {
 	return LoadSchema().Name
 }
+
+
