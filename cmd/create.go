@@ -52,7 +52,11 @@ The Image will be pushed to a specified registry
 		if err != nil{
 			panic(err)
 		}
-		create(name, push)
+		quay, err := cmd.Flags().GetBool("quay")
+		if err != nil{
+			panic(err)
+		}
+		create(name, push, quay)
 	},
 }
 
@@ -60,10 +64,11 @@ func init() {
 	rootCmd.AddCommand(createCmd)
 
 	createCmd.Flags().BoolP("push", "p", false, "Push Image")
+	createCmd.Flags().BoolP("quay", "q", false, "Push to Quay.io")
 	createCmd.Flags().StringP("name", "n", "", "UserName or Org")
 }
 
-func create(name string, push bool) {
+func create(name string, push bool, quay bool) {
 	wd, err := os.Getwd()
 	if err != nil {
 		panic(err)
@@ -87,7 +92,12 @@ func create(name string, push bool) {
 	if err != nil {
 		panic(err)
 	}
-	imageName := name + "/" + funcName
+	var imageName string
+	if quay {
+		imageName = "quay.io/" + name + "/" + funcName
+	} else {
+		imageName = name + "/" + funcName
+	}
 	dockerBuildContext, err := os.Open("/tmp/archieve.tar")
 	defer dockerBuildContext.Close()
 	cli, _ := client.NewClientWithOpts(client.FromEnv)
