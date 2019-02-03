@@ -37,9 +37,19 @@ Alternativly you can initalize a function with no License by :
 $ r3x init hello-function --type js --license none
 ```
 ### Create a Function as a Container Image
+The create function image locally:
 ```
 $ cd <<function dir>>
-$ r3x create
+$ r3x create -n <<Repo Name or Org>>
+```
+To create and push an image to Docker Hub:
+```
+$ r3x create -p -n <<Repo Name or Org>>
+
+```
+To create and push an image to Quay.io
+```
+$ r3x create -p -q -n <<Repo Name or Org>>
 ```
 
 ## License
