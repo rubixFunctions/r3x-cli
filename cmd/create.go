@@ -21,7 +21,9 @@ import (
 	"fmt"
 	"github.com/docker/docker/pkg/jsonmessage"
 	"github.com/docker/docker/pkg/term"
+	"golang.org/x/crypto/ssh/terminal"
 	"os"
+	"syscall"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -35,15 +37,22 @@ var createCmd = &cobra.Command{
 	Short: "Build a RubiX Function as a Container",
 	Long: `
 Build a RubiX Function as a Container Image.
-The Image will be pushed to a specified registery
+The Image will be pushed to a specified registry
 `,
 	Run: func(cmd *cobra.Command, args []string) {
+		name, err := cmd.Flags().GetString("name")
+		if err != nil {
+			panic(err)
+		}
+		if name == ""{
+			fmt.Println("UserName or OrgName needed")
+			return
+		}
 		push, err := cmd.Flags().GetBool("push")
 		if err != nil{
 			panic(err)
 		}
-		create(push)
-
+		create(name, push)
 	},
 }
 
@@ -51,10 +60,10 @@ func init() {
 	rootCmd.AddCommand(createCmd)
 
 	createCmd.Flags().BoolP("push", "p", false, "Push Image")
-
+	createCmd.Flags().StringP("name", "n", "", "UserName or Org")
 }
 
-func create(push bool) {
+func create(name string, push bool) {
 	wd, err := os.Getwd()
 	if err != nil {
 		panic(err)
@@ -64,6 +73,7 @@ func create(push bool) {
 		panic("A function needs a name")
 		return
 	}
+	pass := getPass()
 	tar := new(archivex.TarFile)
 	err = tar.Create("/tmp/archieve.tar")
 	if  err != nil {
@@ -77,6 +87,7 @@ func create(push bool) {
 	if err != nil {
 		panic(err)
 	}
+	imageName := name + "/" + funcName
 	dockerBuildContext, err := os.Open("/tmp/archieve.tar")
 	defer dockerBuildContext.Close()
 	cli, _ := client.NewClientWithOpts(client.FromEnv)
@@ -85,7 +96,7 @@ func create(push bool) {
 		Remove:         true,
 		ForceRemove:    true,
 		// hard coded tag, till schema is added to sdk
-		Tags:       []string{funcName},
+		Tags:       []string{imageName},
 		PullParent: true}
 	buildResponse, err := cli.ImageBuild(context.Background(), dockerBuildContext, options)
 	if err != nil {
@@ -97,9 +108,8 @@ func create(push bool) {
 
 	if push {
 		authString :=  types.AuthConfig{
-			Username: "<<name>>",
-			Password: "<<password>>",
-			Email: "<<email>>",
+			Username: name,
+			Password: pass,
 		}
 		encodedJSON, err := json.Marshal(authString)
 		if err != nil {
@@ -111,7 +121,7 @@ func create(push bool) {
 			RegistryAuth: authStr,
 		}
 
-		pushResponse, err := cli.ImagePush(context.Background(), "<<name>>/"+funcName, pushOptions)
+		pushResponse, err := cli.ImagePush(context.Background(), imageName, pushOptions)
 		if err != nil {
 			fmt.Printf("%s", err.Error())
 		}
@@ -121,6 +131,15 @@ func create(push bool) {
 	}
 
 
+}
+
+func getPass() string {
+	fmt.Print("Enter Password: ")
+	bytePass, err := terminal.ReadPassword(int(syscall.Stdin))
+	if err != nil {
+		panic(err)
+	}
+	return string(bytePass)
 }
 
 func getName() string {
