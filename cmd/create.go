@@ -16,10 +16,14 @@ package cmd
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"github.com/docker/docker/pkg/jsonmessage"
 	"github.com/docker/docker/pkg/term"
+	"golang.org/x/crypto/ssh/terminal"
 	"os"
+	"syscall"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -33,19 +37,38 @@ var createCmd = &cobra.Command{
 	Short: "Build a RubiX Function as a Container",
 	Long: `
 Build a RubiX Function as a Container Image.
-The Image will be pushed to a specified registery
+The Image will be pushed to a specified registry
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		create()
+		name, err := cmd.Flags().GetString("name")
+		if err != nil {
+			panic(err)
+		}
+		if name == ""{
+			fmt.Println("UserName or OrgName needed")
+			return
+		}
+		push, err := cmd.Flags().GetBool("push")
+		if err != nil{
+			panic(err)
+		}
+		quay, err := cmd.Flags().GetBool("quay")
+		if err != nil{
+			panic(err)
+		}
+		create(name, push, quay)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(createCmd)
 
+	createCmd.Flags().BoolP("push", "p", false, "Push Image")
+	createCmd.Flags().BoolP("quay", "q", false, "Push to Quay.io")
+	createCmd.Flags().StringP("name", "n", "", "UserName or Org")
 }
 
-func create() {
+func create(name string, push bool, quay bool) {
 	wd, err := os.Getwd()
 	if err != nil {
 		panic(err)
@@ -55,20 +78,35 @@ func create() {
 		panic("A function needs a name")
 		return
 	}
+	pass := getPass()
 	tar := new(archivex.TarFile)
-	_ = tar.Create(wd + "/archieve.tar")
-	_ = tar.AddAll(wd, false)
-	_ = tar.Close()
-	dockerBuildContext, err := os.Open(wd + "/archieve.tar")
+	err = tar.Create("/tmp/archieve.tar")
+	if  err != nil {
+		panic(err)
+	}
+	err = tar.AddAll(wd, false)
+	if err != nil {
+		panic(err)
+	}
+	err = tar.Close()
+	if err != nil {
+		panic(err)
+	}
+	var imageName string
+	if quay {
+		imageName = "quay.io/" + name + "/" + funcName
+	} else {
+		imageName = name + "/" + funcName
+	}
+	dockerBuildContext, err := os.Open("/tmp/archieve.tar")
 	defer dockerBuildContext.Close()
-	defaultHeaders := map[string]string{"User-Agent": "ego-v-0.0.1"}
-	cli, _ := client.NewClient("unix:///var/run/docker.sock", "v1.24", nil, defaultHeaders)
+	cli, _ := client.NewClientWithOpts(client.FromEnv)
 	options := types.ImageBuildOptions{
 		SuppressOutput: false,
 		Remove:         true,
 		ForceRemove:    true,
 		// hard coded tag, till schema is added to sdk
-		Tags:       []string{funcName},
+		Tags:       []string{imageName},
 		PullParent: true}
 	buildResponse, err := cli.ImageBuild(context.Background(), dockerBuildContext, options)
 	if err != nil {
@@ -77,7 +115,45 @@ func create() {
 	fmt.Println("Build Image has Started ")
 	termFd, isTerm := term.GetFdInfo(os.Stderr)
 	jsonmessage.DisplayJSONMessagesStream(buildResponse.Body, os.Stderr, termFd, isTerm, nil)
+
+	if push {
+		authString :=  types.AuthConfig{
+			Username: name,
+			Password: pass,
+		}
+		encodedJSON, err := json.Marshal(authString)
+		if err != nil {
+			panic(err)
+		}
+		authStr := base64.URLEncoding.EncodeToString(encodedJSON)
+
+		pushOptions := types.ImagePushOptions{
+			RegistryAuth: authStr,
+		}
+
+		pushResponse, err := cli.ImagePush(context.Background(), imageName, pushOptions)
+		if err != nil {
+			fmt.Printf("%s", err.Error())
+		}
+		fmt.Println("Pushing Image has Started")
+		termFD, isTErm := term.GetFdInfo(os.Stderr)
+		jsonmessage.DisplayJSONMessagesStream(pushResponse, os.Stderr, termFD, isTErm, nil)
+	}
+
+
 }
+
+func getPass() string {
+	fmt.Print("Enter Password: ")
+	bytePass, err := terminal.ReadPassword(int(syscall.Stdin))
+	if err != nil {
+		panic(err)
+	}
+	return string(bytePass)
+}
+
 func getName() string {
 	return LoadSchema().Name
 }
+
+
