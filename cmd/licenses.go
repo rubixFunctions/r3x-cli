@@ -14,6 +14,8 @@
 package cmd
 
 import (
+	"fmt"
+	"path/filepath"
 	"strings"
 )
 
@@ -81,4 +83,27 @@ func getPossibleMatches() []string {
 		}
 	}
 	return PossibleMatchesList
+}
+
+func createLicense(function *Function) {
+	var name = function.license.Name
+
+	if name == "" {
+		name = "Apache-2.0"
+	}
+
+	var lic = getLicense(name)
+
+	if lic.Text != "" {
+		data := make(map[string]interface{})
+		rootCmdScript, err := executeTemplate(lic.Text, data)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		err = writeStringToFile(filepath.Join(function.AbsPath(), "LICENSE"), rootCmdScript)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
 }

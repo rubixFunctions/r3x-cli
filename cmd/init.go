@@ -59,8 +59,7 @@ Init will not use an existing directory with contents.`,
 					function.license.Name = license
 					var schema *Schema
 					schema = NewSchema("r3x-"+arg, "js", "")
-					initializeFunction(function, schema)
-					fmt.Println(`Your Function is ready at` + function.AbsPath())
+					InitializeJSFunction(function, schema)
 				}
 			default:
 				fmt.Println(`Function type required, use '-t' flag
@@ -78,124 +77,6 @@ Please insure license choice matches the following:
 	},
 }
 
-func initializeFunction(function *Function ,schema *Schema) {
-	if !exists(function.AbsPath()) {
-		err := os.MkdirAll(function.AbsPath(), os.ModePerm)
-		if err != nil {
-			fmt.Println(err)
-		}
-	} else if !isEmpty(function.AbsPath()) {
-		fmt.Println("Function can not be bootstrapped in a non empty direcctory: " + function.AbsPath())
-	}
-
-	jSTemplate := `const r3x = require('@rubixfunctions/r3x-js-sdk')
-
-let schema
-r3x.execute(function(){
-	let response = {'message' : 'Hello r3x function'}
-	return response 
-}, schema)`
-
-	dockerTemplate := `FROM node:alpine
-
-WORKDIR /usr/src/app
-
-COPY . .
-
-RUN npm install --only=production
-
-ENV PORT 8080
-EXPOSE $PORT
-
-CMD [ "npm", "start" ]`
-
-	createFile(function, jSTemplate, "r3x-func.js")
-	createFile(function, dockerTemplate, "Dockerfile")
-	createPackageJSON(function)
-	createLicense(function)
-	createSchema(schema, function)
-}
-
-func createSchema(schema *Schema, function *Function){
-	data := make(map[string]interface{})
-	data["name"] = schema.Name
-	data["funcType"] = schema.FuncType
-	data["response"] = schema.Response
-	var schemaJson = `{
-"name" : "{{.name}}",
-"funcType" : "{{.funcType}}",
-"response" : "{{.response}}"
-}`
-
-	rootCmdScript, err := executeTemplate(schemaJson, data)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	err = writeStringToFile(filepath.Join(function.AbsPath(), "schema.json"), rootCmdScript)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-}
-
-func createLicense(function *Function) {
-	var name = function.license.Name
-
-	if name == "" {
-		name = "Apache-2.0"
-	}
-
-	var lic = getLicense(name)
-
-	if lic.Text != "" {
-		data := make(map[string]interface{})
-		rootCmdScript, err := executeTemplate(lic.Text, data)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		err = writeStringToFile(filepath.Join(function.AbsPath(), "LICENSE"), rootCmdScript)
-		if err != nil {
-			fmt.Println(err)
-		}
-	}
-}
-
-func createPackageJSON(function *Function) {
-	tempPackageTemplate := `{
-		"name": "{{ .name}}",
-		"version": "0.0.1",
-		"description": "r3x Knative Function",
-		"main": "r3x-func.js",
-		"scripts": {
-		  "start": "node r3x-func.js"
-		},
-		"keywords": [
-		  "javascript",
-		  "knative",
-		  "kubernetes",
-		  "serverless"
-		],
-		"dependencies": {
-		  "@rubixfunctions/r3x-js-sdk": "0.0.9"
-		}
-	  }
-	  `
-
-	data := make(map[string]interface{})
-	data["name"] = function.name
-
-	rootCmdScript, err := executeTemplate(tempPackageTemplate, data)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	err = writeStringToFile(filepath.Join(function.AbsPath(), "package.json"), rootCmdScript)
-	if err != nil {
-		fmt.Println(err)
-	}
-}
 
 func init() {
 	rootCmd.AddCommand(initCmd)
