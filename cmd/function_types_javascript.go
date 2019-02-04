@@ -72,7 +72,6 @@ r3x.execute(function(){
 }
 
 func createJSServiceYAML(name string, image string){
-	fmt.Println("Generating service.yaml....")
 	wd, err := os.Getwd()
 	if err != nil {
 		log.Print(err)
@@ -103,6 +102,8 @@ spec:
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	fmt.Println("schema.json generated")
 }
 
 func createJSSchema(schema *Schema, function *Function){

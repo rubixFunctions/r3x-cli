@@ -22,6 +22,7 @@ import (
 	"github.com/docker/docker/pkg/jsonmessage"
 	"github.com/docker/docker/pkg/term"
 	"golang.org/x/crypto/ssh/terminal"
+	"io"
 	"os"
 	"syscall"
 
@@ -100,7 +101,20 @@ func create(name string, push bool, quay bool) {
 	}
 	dockerBuildContext, err := os.Open("/tmp/archieve.tar")
 	defer dockerBuildContext.Close()
+
 	cli, _ := client.NewClientWithOpts(client.FromEnv)
+
+	buildImage(imageName, cli, dockerBuildContext)
+
+	if push {
+		pushImage(name, pass, imageName, cli)
+	}
+
+	genServiceYaml(name, imageName)
+
+}
+
+func buildImage(imageName string, cli client.ImageAPIClient, dockerBuildContext io.Reader){
 	options := types.ImageBuildOptions{
 		SuppressOutput: false,
 		Remove:         true,
@@ -116,33 +130,37 @@ func create(name string, push bool, quay bool) {
 	termFd, isTerm := term.GetFdInfo(os.Stderr)
 	jsonmessage.DisplayJSONMessagesStream(buildResponse.Body, os.Stderr, termFd, isTerm, nil)
 
-	if push {
-		authString :=  types.AuthConfig{
-			Username: name,
-			Password: pass,
-		}
-		encodedJSON, err := json.Marshal(authString)
-		if err != nil {
-			panic(err)
-		}
-		authStr := base64.URLEncoding.EncodeToString(encodedJSON)
+}
 
-		pushOptions := types.ImagePushOptions{
-			RegistryAuth: authStr,
-		}
-
-		pushResponse, err := cli.ImagePush(context.Background(), imageName, pushOptions)
-		if err != nil {
-			fmt.Printf("%s", err.Error())
-		}
-		fmt.Println("Pushing Image has Started")
-		termFD, isTErm := term.GetFdInfo(os.Stderr)
-		jsonmessage.DisplayJSONMessagesStream(pushResponse, os.Stderr, termFD, isTErm, nil)
+func pushImage(name string, pass string, imageName string, cli client.ImageAPIClient){
+	authString :=  types.AuthConfig{
+		Username: name,
+		Password: pass,
 	}
+	encodedJSON, err := json.Marshal(authString)
+	if err != nil {
+		panic(err)
+	}
+	authStr := base64.URLEncoding.EncodeToString(encodedJSON)
+
+	pushOptions := types.ImagePushOptions{
+		RegistryAuth: authStr,
+	}
+
+	pushResponse, err := cli.ImagePush(context.Background(), imageName, pushOptions)
+	if err != nil {
+		fmt.Printf("%s", err.Error())
+	}
+	fmt.Println("Pushing Image has Started")
+	termFD, isTErm := term.GetFdInfo(os.Stderr)
+	jsonmessage.DisplayJSONMessagesStream(pushResponse, os.Stderr, termFD, isTErm, nil)
+}
+
+func genServiceYaml(name string, image string){
 	schema := LoadSchema()
 	switch schema.FuncType {
 	case "js":
-		createJSServiceYAML(name, imageName)
+		createJSServiceYAML(name, image)
 	default:
 		fmt.Println("Error parsing Schema, no service.yaml generated")
 	}
