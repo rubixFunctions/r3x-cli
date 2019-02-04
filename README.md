@@ -52,6 +52,15 @@ To create and push an image to Quay.io
 $ r3x create -p -q -n <<Repo Name or Org>>
 ```
 
+### Deploy a Function as a Container 
+On success of the create command, a `service.yaml` file is generated and can be used to deploy the Function to Knative. For full instructions on this process see our [Documentation](https://github.com/rubixFunctions/r3x-docs/blob/master/install/README.md)
+
+Alternatively, a Function as a Container can be run like any other container using a runtime like Docker, for example:
+```
+$ docker run -t -p 8080:8080 <<image tag>>
+```
+
+
 ## License
 This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details
 
