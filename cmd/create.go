@@ -96,7 +96,7 @@ func create(name string, push bool, quay bool) {
 	if quay {
 		imageName = "quay.io/" + name + "/" + funcName
 	} else {
-		imageName = name + "/" + funcName
+		imageName = "docker.io/" + name + "/" + funcName
 	}
 	dockerBuildContext, err := os.Open("/tmp/archieve.tar")
 	defer dockerBuildContext.Close()
@@ -139,8 +139,13 @@ func create(name string, push bool, quay bool) {
 		termFD, isTErm := term.GetFdInfo(os.Stderr)
 		jsonmessage.DisplayJSONMessagesStream(pushResponse, os.Stderr, termFD, isTErm, nil)
 	}
-
-
+	schema := LoadSchema()
+	switch schema.FuncType {
+	case "js":
+		createJSServiceYAML(name, imageName)
+	default:
+		fmt.Println("Error parsing Schema, no service.yaml generated")
+	}
 }
 
 func getPass() string {
