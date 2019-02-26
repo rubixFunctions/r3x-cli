@@ -16,7 +16,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 )
@@ -35,7 +34,7 @@ func InitializeJSFunction(function *Function, schema *Schema){
 
 	createJSDockerfile(function)
 	createJSMain(function)
-	createJSSchema(schema, function)
+	createSchema(schema, function)
 	createJSPackageJSON(function)
 	createLicense(function)
 	fmt.Println(`Your Function is ready at` + function.AbsPath())
@@ -69,63 +68,6 @@ r3x.execute(function(){
 	return response 
 }, schema)`
 	createFile(function, jSTemplate, "r3x-func.js")
-}
-
-func createJSServiceYAML(name string, image string){
-	wd, err := os.Getwd()
-	if err != nil {
-		log.Print(err)
-		return
-	}
-	data := make(map[string]interface{})
-	data["name"] = name
-	data["image"] = image
-	var serviceYaml = `apiVersion: serving.knative.dev/v1alpha1
-kind: Service
-metadata:
-  name: {{.name}}
-  namespace: default
-spec:
-  runLatest:
-    configuration:
-      revisionTemplate:
-        spec:
-          container:
-            image: {{.image}}`
-
-	rootCmdScript, err := executeTemplate(serviceYaml, data)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	err = writeStringToFile(filepath.Join(wd, "service.yaml"), rootCmdScript)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println("schema.json generated")
-}
-
-func createJSSchema(schema *Schema, function *Function){
-	data := make(map[string]interface{})
-	data["name"] = schema.Name
-	data["funcType"] = schema.FuncType
-	data["response"] = schema.Response
-	var schemaJson = `{
-"name" : "{{.name}}",
-"funcType" : "{{.funcType}}",
-"response" : "{{.response}}"
-}`
-
-	rootCmdScript, err := executeTemplate(schemaJson, data)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	err = writeStringToFile(filepath.Join(function.AbsPath(), "schema.json"), rootCmdScript)
-	if err != nil {
-		fmt.Println(err)
-	}
 }
 
 func createJSPackageJSON(function *Function) {

@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -143,3 +144,61 @@ func createFile(function *Function, template, file string) {
 		fmt.Println(err)
 	}
 }
+
+func createSchema(schema *Schema, function *Function){
+	data := make(map[string]interface{})
+	data["name"] = schema.Name
+	data["funcType"] = schema.FuncType
+	data["response"] = schema.Response
+	var schemaJson = `{
+"name" : "{{.name}}",
+"funcType" : "{{.funcType}}",
+"response" : "{{.response}}"
+}`
+
+	rootCmdScript, err := executeTemplate(schemaJson, data)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	err = writeStringToFile(filepath.Join(function.AbsPath(), "schema.json"), rootCmdScript)
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func createServiceYAML(name string, image string){
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Print(err)
+		return
+	}
+	data := make(map[string]interface{})
+	data["name"] = name
+	data["image"] = image
+	var serviceYaml = `apiVersion: serving.knative.dev/v1alpha1
+kind: Service
+metadata:
+  name: {{.name}}
+  namespace: default
+spec:
+  runLatest:
+    configuration:
+      revisionTemplate:
+        spec:
+          container:
+            image: {{.image}}`
+
+	rootCmdScript, err := executeTemplate(serviceYaml, data)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	err = writeStringToFile(filepath.Join(wd, "service.yaml"), rootCmdScript)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println("service.yaml generated")
+}
+
