@@ -35,7 +35,7 @@ func InitializeJSFunction(function *Function, schema *Schema){
 
 	createJSDockerfile(function)
 	createJSMain(function)
-	createJSSchema(schema, function)
+	createSchema(schema, function)
 	createJSPackageJSON(function)
 	createLicense(function)
 	fmt.Println(`Your Function is ready at` + function.AbsPath())
@@ -104,28 +104,6 @@ spec:
 	}
 
 	fmt.Println("schema.json generated")
-}
-
-func createJSSchema(schema *Schema, function *Function){
-	data := make(map[string]interface{})
-	data["name"] = schema.Name
-	data["funcType"] = schema.FuncType
-	data["response"] = schema.Response
-	var schemaJson = `{
-"name" : "{{.name}}",
-"funcType" : "{{.funcType}}",
-"response" : "{{.response}}"
-}`
-
-	rootCmdScript, err := executeTemplate(schemaJson, data)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	err = writeStringToFile(filepath.Join(function.AbsPath(), "schema.json"), rootCmdScript)
-	if err != nil {
-		fmt.Println(err)
-	}
 }
 
 func createJSPackageJSON(function *Function) {

@@ -143,3 +143,25 @@ func createFile(function *Function, template, file string) {
 		fmt.Println(err)
 	}
 }
+
+func createSchema(schema *Schema, function *Function){
+	data := make(map[string]interface{})
+	data["name"] = schema.Name
+	data["funcType"] = schema.FuncType
+	data["response"] = schema.Response
+	var schemaJson = `{
+"name" : "{{.name}}",
+"funcType" : "{{.funcType}}",
+"response" : "{{.response}}"
+}`
+
+	rootCmdScript, err := executeTemplate(schemaJson, data)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	err = writeStringToFile(filepath.Join(function.AbsPath(), "schema.json"), rootCmdScript)
+	if err != nil {
+		fmt.Println(err)
+	}
+}

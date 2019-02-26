@@ -61,11 +61,27 @@ Init will not use an existing directory with contents.`,
 					schema = NewSchema("r3x-"+arg, "js", "")
 					InitializeJSFunction(function, schema)
 				}
+			case "go":
+				var function *Function
+				if len(args) == 0 {
+					fmt.Println("Function name needed")
+				} else if len(args) == 1 {
+					arg := args[0]
+					if arg[0] == '.' {
+						arg = filepath.Join(wd, arg)
+					}
+					function = NewFunction(arg)
+					function.license.Name = license
+					var schema *Schema
+					schema = NewSchema("r3x-"+arg, "go", "")
+					InitializeGoFunction(function, schema)
+				}
 			default:
 				fmt.Println(`Function type required, use '-t' flag
 			
 			Supported paradigms :
-				- JavaScript : '-t js'`)
+				- JavaScript : '-t js'
+				- GoLang : '-t go'`)
 			}
 		} else {
 			fmt.Println(`License choice not recognized.
