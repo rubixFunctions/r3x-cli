@@ -2,6 +2,9 @@
 [![CircleCI](https://circleci.com/gh/rubixFunctions/r3x-cli.svg?style=svg)](https://circleci.com/gh/rubixFunctions/r3x-cli)
 [![License](https://img.shields.io/badge/-Apache%202.0-blue.svg)](https://opensource.org/s/Apache-2.0)
 
+## Documentation
+For full information on how to use the SDK and deploy a function to Knative, refer to our [Documentation here.](https://github.com/rubixFunctions/r3x-docs/blob/master/install/README.md)
+
 # Usage
 ## Prerequisite
 The CLI requires the following :
@@ -36,6 +39,12 @@ Alternativly you can initalize a function with no License by :
 ```
 $ r3x init hello-function --type js --license none
 ```
+#### Supported Languages 
+RubiX supports the following:
+
+- JavaScript : `--type js`
+- Golang : `--type go`
+
 ### Create a Function as a Container Image
 The create function image locally:
 ```
