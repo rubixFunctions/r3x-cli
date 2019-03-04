@@ -44,21 +44,22 @@ RubiX supports the following:
 
 - JavaScript : `--type js`
 - Golang : `--type go`
+- Python : `--type py`
 
 ### Create a Function as a Container Image
 The create function image locally:
 ```
 $ cd <<function dir>>
-$ r3x create -n <<Repo Name or Org>>
+$ r3x build -n <<Repo Name or Org>>
 ```
 To create and push an image to Docker Hub:
 ```
-$ r3x create -p -n <<Repo Name or Org>>
+$ r3x build -p -n <<Repo Name or Org>>
 
 ```
 To create and push an image to Quay.io
 ```
-$ r3x create -p -q -n <<Repo Name or Org>>
+$ r3x build -p -q -n <<Repo Name or Org>>
 ```
 
 ### Deploy a Function as a Container 
