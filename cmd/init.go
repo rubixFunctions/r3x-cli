@@ -58,7 +58,7 @@ Init will not use an existing directory with contents.`,
 					function = NewFunction(arg)
 					function.license.Name = license
 					var schema *Schema
-					schema = NewSchema("r3x-"+arg, "js", "")
+					schema = NewSchema("r3x-"+arg, "js", "json")
 					InitializeJSFunction(function, schema)
 				}
 			case "go":
@@ -73,15 +73,26 @@ Init will not use an existing directory with contents.`,
 					function = NewFunction(arg)
 					function.license.Name = license
 					var schema *Schema
-					schema = NewSchema("r3x-"+arg, "go", "")
+					schema = NewSchema("r3x-"+arg, "go", "json")
 					InitializeGoFunction(function, schema)
 				}
+			case "py":
+				var function *Function
+				if len(args) == 0 {
+					fmt.Println("Function name needed")
+				} else if len(args) == 1 {
+					arg := args[0]
+					if arg[0] == '.' {
+						arg = filepath.Join(wd, arg)
+					}
+					function = NewFunction(arg)
+					function.license.Name = license
+					var schema *Schema
+					schema = NewSchema("r3x-"+arg, "py", "json")
+					InitializePyFunction(function, schema)
+				}
 			default:
-				fmt.Println(`Function type required, use '-t' flag
-			
-			Supported paradigms :
-				- JavaScript : '-t js'
-				- GoLang : '-t go'`)
+				fmt.Println(warningTypeMessage)
 			}
 		} else {
 			fmt.Println(`License choice not recognized.
@@ -93,6 +104,11 @@ Please insure license choice matches the following:
 	},
 }
 
+var warningTypeMessage = `Function type required, use '-t' flag
+	Supported paradigms :
+		- JavaScript : '-t js'
+		- GoLang : '-t go'
+		- Python : '-t py'`
 
 func init() {
 	rootCmd.AddCommand(initCmd)

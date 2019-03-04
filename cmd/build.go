@@ -33,8 +33,8 @@ import (
 )
 
 // createCmd represents the create command
-var createCmd = &cobra.Command{
-	Use:   "create",
+var buildCmd = &cobra.Command{
+	Use:   "build",
 	Short: "Build a RubiX Function as a Container",
 	Long: `
 Build a RubiX Function as a Container Image.
@@ -62,11 +62,11 @@ The Image will be pushed to a specified registry
 }
 
 func init() {
-	rootCmd.AddCommand(createCmd)
+	rootCmd.AddCommand(buildCmd)
 
-	createCmd.Flags().BoolP("push", "p", false, "Push Image")
-	createCmd.Flags().BoolP("quay", "q", false, "Push to Quay.io")
-	createCmd.Flags().StringP("name", "n", "", "UserName or Org")
+	buildCmd.Flags().BoolP("push", "p", false, "Push Image")
+	buildCmd.Flags().BoolP("quay", "q", false, "Push to Quay.io")
+	buildCmd.Flags().StringP("name", "n", "", "UserName or Org")
 }
 
 func create(name string, push bool, quay bool) {
@@ -110,7 +110,7 @@ func create(name string, push bool, quay bool) {
 		pushImage(name, pass, imageName, cli)
 	}
 
-	genServiceYaml(imageName, imageName)
+	genServiceYaml(funcName, imageName)
 
 }
 
@@ -162,6 +162,8 @@ func genServiceYaml(name string, image string){
 	case "js":
 		createServiceYAML(name, image)
 	case "go":
+		createServiceYAML(name, image)
+	case "py":
 		createServiceYAML(name, image)
 	default:
 		fmt.Println("Error parsing Schema, no service.yaml generated")

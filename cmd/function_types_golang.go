@@ -80,7 +80,3 @@ func r3xFunc(input map[string]interface{}) []byte {
 
 }
 
-func createGoServiceYaml(name string, image string){
-
-}
-
