@@ -110,7 +110,7 @@ func create(name string, push bool, quay bool) {
 		pushImage(name, pass, imageName, cli)
 	}
 
-	genServiceYaml(imageName, imageName)
+	genServiceYaml(funcName, imageName)
 
 }
 
@@ -162,6 +162,8 @@ func genServiceYaml(name string, image string){
 	case "js":
 		createServiceYAML(name, image)
 	case "go":
+		createServiceYAML(name, image)
+	case "py":
 		createServiceYAML(name, image)
 	default:
 		fmt.Println("Error parsing Schema, no service.yaml generated")
