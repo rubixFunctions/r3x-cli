@@ -105,11 +105,10 @@ Please insure license choice matches the following:
 }
 
 var warningTypeMessage = `Function type required, use '-t' flag
-			
-			Supported paradigms :
-				- JavaScript : '-t js'
-				- GoLang : '-t go'
-				- Python : '-t py'`
+	Supported paradigms :
+		- JavaScript : '-t js'
+		- GoLang : '-t go'
+		- Python : '-t py'`
 
 func init() {
 	rootCmd.AddCommand(initCmd)
