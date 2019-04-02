@@ -4,16 +4,10 @@ references:
   workspace: &workspace
                /go/src/github.com/ciaranRoche/r3x/r3x-cli
 
-  run_tests: &run_tests
+  run_tests: &run_check
     run:
-      name: "Build and Run All Tests"
+      name: "run check"
       command: |
-        mkdir -p bin
-        curl -Lso bin/shellcheck https://github.com/caarlos0/shellcheck-docker/releases/download/v0.4.6/shellcheck
-        chmod +x bin/shellcheck
-        go get -t -v ./...
-        PATH=$PATH:$PWD/bin go test -v ./...
-        go build
         if [ -z $NOVET ]; then
           diff -u <(echo -n) <(go vet . 2>&1 | grep -vE 'ExampleCommand|bash_completions.*Fprint');
         fi
@@ -25,34 +19,15 @@ jobs:
     working_directory: *workspace
     steps:
       - checkout
-      - run:
-        name: "Create bin"
-        command: mkdir -p bin
-      - run:
-        name: "Get Shell Check"
-        command: curl -Lso bin/shellcheck https://github.com/caarlos0/shellcheck-docker/releases/download/v0.4.6/shellcheck
-      - run:
-        name: "Set Permissions"
-        command: chmod +x bin/shellcheck
-      - run:
-        name: "Get Dependencies"
-        command: go get -t -v ./...
-      - run:
-        name: "Set PATH"
-        command: PATH=$PATH:$PWD/bin go test -v ./...
-      - run:
-        name: "Go Build"
-        command: go build
-      - run:
-        name: "Get Coveralls"
-        command: go get github.com/mattn/goveralls
-      - run:
-        name: "Make Unit Test"
-        command: make test-unit
-      - run:
-        name: "Make Integration Coverage"
-        command: make test-integration-cover
-      - run:
-        name: "execute goveralls"
-        command: /go/bin/goveralls -coverprofile=coverage-all.out -service=circle-ci -repotoken=ElpAmh224c6d7FHeeBJkp31RSni1CeDUa
+      - run: mkdir -p bin
+      - run: curl -Lso bin/shellcheck https://github.com/caarlos0/shellcheck-docker/releases/download/v0.4.6/shellcheck
+      - run: chmod +x bin/shellcheck
+      - run: go get -t -v ./...
+      - run: PATH=$PATH:$PWD/bin go test -v ./...
+      - run: go build
+      - run: go get github.com/mattn/goveralls
+      - run: make test-unit
+      - run: make test-integration-cover
+      - run: /go/bin/goveralls -coverprofile=coverage-all.out -service=circle-ci -repotoken=ElpAmh224c6d7FHeeBJkp31RSni1CeDUa
+      - *run_check
 
