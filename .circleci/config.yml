@@ -21,7 +21,7 @@ references:
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.12
+      - image: circleci/golang:1.10
     working_directory: *workspace
     steps:
       - checkout
