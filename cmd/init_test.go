@@ -43,6 +43,41 @@ func TestRubiXJSInitCmd(t *testing.T) {
 	}
 }
 
+func TestRubiXGoInitCmd(t *testing.T) {
+	functionName := "testFunction"
+
+	testFunction := NewFunction(functionName)
+	defer os.RemoveAll(testFunction.AbsPath())
+
+	os.Args = []string{"r3x", "init", functionName, "--type", "go"}
+	if err := rootCmd.Execute(); err != nil {
+		t.Fatal("Error by execution:", err)
+	}
+
+	expectedFiles := []string{"Dockerfile", "LICENSE", "main.go", "schema.json"}
+	gotFiles := []string{}
+
+	err := filepath.Walk(testFunction.AbsPath(), func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		files, err := ioutil.ReadDir(testFunction.AbsPath())
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		for _, f := range files {
+			gotFiles = append(gotFiles, f.Name())
+		}
+
+		return checkLackFiles(expectedFiles, gotFiles)
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestRubiXNoLicenseInitCmd(t *testing.T){
 	functionName := "testFunction"
 
@@ -77,6 +112,7 @@ func TestRubiXNoLicenseInitCmd(t *testing.T){
 		t.Fatal(err)
 	}
 }
+
 
 // checkLackFiles checks if all elements of expected are in got.
 func checkLackFiles(expected, got []string) error {

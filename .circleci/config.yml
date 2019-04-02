@@ -29,5 +29,5 @@ jobs:
       - run: make test-unit
       - run: make test-integration-cover
       - run: /go/bin/goveralls -coverprofile=coverage-all.out -service=circle-ci -repotoken=ElpAmh224c6d7FHeeBJkp31RSni1CeDUa
-      - *run_check
+
 
