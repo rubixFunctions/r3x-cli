@@ -78,6 +78,42 @@ func TestRubiXGoInitCmd(t *testing.T) {
 	}
 }
 
+func TestRubiXPyInitCmd(t *testing.T) {
+	functionName := "testFunction"
+
+	testFunction := NewFunction(functionName)
+	defer os.RemoveAll(testFunction.AbsPath())
+
+	os.Args = []string{"r3x", "init", functionName, "--type", "py"}
+	if err := rootCmd.Execute(); err != nil {
+		t.Fatal("Error by execution:", err)
+	}
+
+	expectedFiles := []string{"Dockerfile", "LICENSE", "r3x-func.py", "schema.json"}
+	gotFiles := []string{}
+
+	err := filepath.Walk(testFunction.AbsPath(), func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		files, err := ioutil.ReadDir(testFunction.AbsPath())
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		for _, f := range files {
+			gotFiles = append(gotFiles, f.Name())
+		}
+
+		return checkLackFiles(expectedFiles, gotFiles)
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+
 func TestRubiXNoLicenseInitCmd(t *testing.T){
 	functionName := "testFunction"
 
