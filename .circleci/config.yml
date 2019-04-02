@@ -18,7 +18,7 @@ references:
         if [ -z $NOVET ]; then
           diff -u <(echo -n) <(go vet . 2>&1 | grep -vE 'ExampleCommand|bash_completions.*Fprint');
         fi
-        /go/bin/goveralls -coverprofile=coverage-all.out -service=circle-ci -repotoken=ElpAmh224c6d7FHeeBJkp31RSni1CeDUa
+        /go/bin/goveralls -coverprofile=/home/ubuntu/coverage-all.out -service=circle-ci -repotoken=ElpAmh224c6d7FHeeBJkp31RSni1CeDUa
 
 
 jobs:
