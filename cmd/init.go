@@ -45,6 +45,7 @@ Init will not use an existing directory with contents.`,
 			if err != nil {
 				log.Print(err)
 			}
+			// Switch on different function type flag
 			switch name {
 			case "js":
 				var function *Function
@@ -104,12 +105,14 @@ Please insure license choice matches the following:
 	},
 }
 
+// Warning message triggered on no type flag passed
 var warningTypeMessage = `Function type required, use '-t' flag
 	Supported paradigms :
 		- JavaScript : '-t js'
 		- GoLang : '-t go'
 		- Python : '-t py'`
 
+// Init Init Function
 func init() {
 	rootCmd.AddCommand(initCmd)
 }

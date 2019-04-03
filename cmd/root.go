@@ -46,6 +46,7 @@ func Execute() {
 	}
 }
 
+// Init of r3x flags
 func init() {
 	cobra.OnInitialize(initConfig)
 

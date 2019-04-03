@@ -19,6 +19,7 @@ import (
 	"os"
 )
 
+// Executes the creation on a Python File
 func InitializePyFunction(function *Function, schema *Schema){
 	if !exists(function.AbsPath()) {
 		err := os.MkdirAll(function.AbsPath(), os.ModePerm)
@@ -38,6 +39,7 @@ func InitializePyFunction(function *Function, schema *Schema){
 	fmt.Println(`Your Function is ready at` + function.AbsPath())
 }
 
+// Creates the python specific docker file
 func createPyDockerfile(function *Function){
 	dockerTemplate := `FROM python:2.7.15-alpine
 
@@ -52,6 +54,7 @@ CMD [ "python", "./r3x-func.py" ]`
 	createFile(function, dockerTemplate, "Dockerfile")
 }
 
+// Creates the python main func file
 func createPyMain(function *Function){
 	pyTemplate := `import r3x
 import json

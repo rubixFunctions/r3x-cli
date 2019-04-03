@@ -17,7 +17,6 @@ package cmd
 import (
 	"bytes"
 	"fmt"
-	"github.com/spf13/cobra"
 	"io"
 	"log"
 	"os"
@@ -26,16 +25,8 @@ import (
 	"text/template"
 )
 
-func hasTags(cmd *cobra.Command) bool {
-	for curr := cmd; curr != nil; curr = curr.Parent() {
-		if len(curr.Annotations) > 0 {
-			return true
-		}
-	}
 
-	return false
-}
-
+// Checks if Path exists
 func exists(path string) bool {
 	if path == "" {
 		return false
@@ -50,6 +41,7 @@ func exists(path string) bool {
 	return false
 }
 
+// Checks if Path is empty
 func isEmpty(path string) bool {
 	fi, err := os.Stat(path)
 	if err != nil {
@@ -79,6 +71,7 @@ func isEmpty(path string) bool {
 	return true
 }
 
+// Executes a file template
 func executeTemplate(tmplStr string, data interface{}) (string, error) {
 	tmpl, err := template.New("").Funcs(template.FuncMap{"comment": commentifyString}).Parse(tmplStr)
 	if err != nil {
@@ -90,6 +83,7 @@ func executeTemplate(tmplStr string, data interface{}) (string, error) {
 	return buf.String(), err
 }
 
+// Writes contents to a file
 func writeToFile(path string, r io.Reader) error {
 	if exists(path) {
 		return fmt.Errorf("%v already exists", path)
@@ -112,10 +106,12 @@ func writeToFile(path string, r io.Reader) error {
 	return err
 }
 
+// Executes write to file function
 func writeStringToFile(path string, s string) error {
 	return writeToFile(path, strings.NewReader(s))
 }
 
+// Formats new lines in file
 func commentifyString(in string) string {
 	var newlines []string
 	lines := strings.Split(in, "\n")
@@ -133,6 +129,7 @@ func commentifyString(in string) string {
 	return strings.Join(newlines, "\n")
 }
 
+// Creates a file
 func createFile(function *Function, template, file string) {
 	data := make(map[string]interface{})
 	rootCmdScript, err := executeTemplate(template, data)
@@ -145,6 +142,7 @@ func createFile(function *Function, template, file string) {
 	}
 }
 
+// Creates a Schema
 func createSchema(schema *Schema, function *Function){
 	data := make(map[string]interface{})
 	data["name"] = schema.Name
@@ -167,6 +165,7 @@ func createSchema(schema *Schema, function *Function){
 	}
 }
 
+// Creates r3x service YAML
 func createServiceYAML(name string, image string){
 	wd, err := os.Getwd()
 	if err != nil {

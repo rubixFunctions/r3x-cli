@@ -20,6 +20,7 @@ import (
 	"path/filepath"
 )
 
+// Executes the creation of a JS function
 func InitializeJSFunction(function *Function, schema *Schema){
 	if !exists(function.AbsPath()) {
 		err := os.MkdirAll(function.AbsPath(), os.ModePerm)
@@ -40,6 +41,7 @@ func InitializeJSFunction(function *Function, schema *Schema){
 	fmt.Println(`Your Function is ready at` + function.AbsPath())
 }
 
+// Creates JS specific Dockerfile
 func createJSDockerfile(function *Function) {
 
 	dockerTemplate := `FROM node:alpine
@@ -59,6 +61,7 @@ CMD [ "npm", "start" ]`
 	createFile(function, dockerTemplate, "Dockerfile")
 }
 
+// Creates main JS func file
 func createJSMain(function *Function){
 	jSTemplate := `const r3x = require('@rubixfunctions/r3x-js-sdk')
 
@@ -70,6 +73,7 @@ r3x.execute(function(){
 	createFile(function, jSTemplate, "r3x-func.js")
 }
 
+// Creates JS package.json file
 func createJSPackageJSON(function *Function) {
 	tempPackageTemplate := `{
 		"name": "{{ .name}}",
@@ -86,7 +90,7 @@ func createJSPackageJSON(function *Function) {
 		  "serverless"
 		],
 		"dependencies": {
-		  "@rubixfunctions/r3x-js-sdk": "0.0.9"
+		  "@rubixfunctions/r3x-js-sdk": "0.0.14"
 		}
 	  }
 	  `

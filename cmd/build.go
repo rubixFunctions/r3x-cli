@@ -61,6 +61,7 @@ The Image will be pushed to a specified registry
 	},
 }
 
+// Declare func flags and adds func to root
 func init() {
 	rootCmd.AddCommand(buildCmd)
 
@@ -69,6 +70,7 @@ func init() {
 	buildCmd.Flags().StringP("name", "n", "", "UserName or Org")
 }
 
+// Create function, builds tar of directory and execute Build Function
 func create(name string, push bool, quay bool) {
 	wd, err := os.Getwd()
 	if err != nil {
@@ -114,6 +116,7 @@ func create(name string, push bool, quay bool) {
 
 }
 
+// Passes tar to docker daemon to create function image
 func buildImage(imageName string, cli client.ImageAPIClient, dockerBuildContext io.Reader){
 	options := types.ImageBuildOptions{
 		SuppressOutput: false,
@@ -132,6 +135,7 @@ func buildImage(imageName string, cli client.ImageAPIClient, dockerBuildContext 
 
 }
 
+// Pushes Image to Registry
 func pushImage(name string, pass string, imageName string, cli client.ImageAPIClient){
 	authString :=  types.AuthConfig{
 		Username: name,
@@ -156,6 +160,7 @@ func pushImage(name string, pass string, imageName string, cli client.ImageAPICl
 	jsonmessage.DisplayJSONMessagesStream(pushResponse, os.Stderr, termFD, isTErm, nil)
 }
 
+// Generates service yaml on successful push to registry
 func genServiceYaml(name string, image string){
 	schema := LoadSchema()
 	switch schema.FuncType {
@@ -170,6 +175,7 @@ func genServiceYaml(name string, image string){
 	}
 }
 
+// Get user password
 func getPass() string {
 	fmt.Print("Enter Password: ")
 	bytePass, err := terminal.ReadPassword(int(syscall.Stdin))
@@ -179,6 +185,7 @@ func getPass() string {
 	return string(bytePass)
 }
 
+// Get function name from schema
 func getName() string {
 	var name = LoadSchema().Name
 	if name == ""{

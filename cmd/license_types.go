@@ -15,6 +15,7 @@
 
 package cmd
 
+// No License Format
 func initNone() {
 	Licenses["none"] = License{
 		Name:            "",
@@ -23,9 +24,11 @@ func initNone() {
 	}
 }
 
+
+// ISCC License format
 func initISC() {
 	Licenses["isc"] = License{
-		Name:            "ISC Licesne",
+		Name:            "ISC License",
 		PossibleMatches: []string{"isc", "ISC"},
 		Text: `ISC License
 
@@ -45,6 +48,7 @@ func initISC() {
 	}
 }
 
+// MIT License Format
 func initMit() {
 	Licenses["mit"] = License{
 		Name:            "MIT License",
@@ -72,6 +76,7 @@ THE SOFTWARE.
 	}
 }
 
+// Apache 2 license format
 func initApache2() {
 	Licenses["apache"] = License{
 		Name:            "Apache 2.0",
@@ -282,6 +287,7 @@ func initApache2() {
 	}
 }
 
+// GNU Lesser General Public License Format
 func initLgpl() {
 	Licenses["lgpl"] = License{
 		Name:            "GNU Lesser General Public License",
@@ -417,6 +423,7 @@ Library.`,
 	}
 }
 
+// Simplified BSD License Format
 func initBsdClause2() {
 	Licenses["freebsd"] = License{
 		Name: "Simplified BSD License",
@@ -445,6 +452,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	}
 }
 
+// New BSD Format
 func initBsdClause3() {
 	Licenses["bsd"] = License{
 		Name:            "NewBSD",
@@ -475,6 +483,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	}
 }
 
+// GNU General Public License 2.0 Format
 func initGpl2() {
 	Licenses["gpl2"] = License{
 		Name:            "GNU General Public License 2.0",
@@ -764,6 +773,7 @@ Public License instead of this License.
 	}
 }
 
+// GNU General Public License 3.0 Format
 func initGpl3() {
 	Licenses["gpl3"] = License{
 		Name:            "GNU General Public License 3.0",
@@ -1325,6 +1335,7 @@ Public License instead of this License.  But first, please read
 	}
 }
 
+// GNU Affero General Public License Format
 func initAgpl() {
 	Licenses["agpl"] = License{
 		Name:            "GNU Affero General Public License",
@@ -1877,6 +1888,7 @@ For more information on this, and how to apply and follow the GNU AGPL, see
 	}
 }
 
+// Common Development and Distribution License Format
 func initCDDL() {
 	Licenses["cddl"] = License{
 		Name:            "Common Development and Distribution License",
@@ -2200,6 +2212,7 @@ func initCDDL() {
 	}
 }
 
+// Eclipse Public License - v 1.0 Format
 func initEclipse() {
 	Licenses["eclipse"] = License{
 		Name:            "Eclipse Public License - v 1.0",
