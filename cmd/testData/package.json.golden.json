@@ -1,0 +1,19 @@
+{
+		"name": "testData",
+		"version": "0.0.1",
+		"description": "r3x Knative Function",
+		"main": "r3x-func.js",
+		"scripts": {
+		  "start": "node r3x-func.js"
+		},
+		"keywords": [
+		  "javascript",
+		  "knative",
+		  "kubernetes",
+		  "serverless"
+		],
+		"dependencies": {
+		  "@rubixfunctions/r3x-js-sdk": "0.0.9"
+		}
+	  }
+	  

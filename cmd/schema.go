@@ -21,6 +21,7 @@ import (
 	"os"
 )
 
+// Schema Struct
 type Schema struct {
 	Name     string `json:"name"`
 	FuncType string `json:"funcType"`
@@ -48,15 +49,20 @@ func NewSchema(functionName string, funcType string, response string) *Schema {
 	return s
 }
 
+// Loads schema from function directory
 func LoadSchema() Schema {
 	wd, err := os.Getwd()
 	if err != nil {
 		log.Print(err)
 	}
+	var schema Schema
+
+	if wd == "" {
+		return schema
+	}
 	file := wd + "/schema.json"
 	fmt.Println(file)
 
-	var schema Schema
 	schemaFile, err := os.Open(file)
 	defer schemaFile.Close()
 

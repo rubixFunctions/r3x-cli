@@ -19,6 +19,7 @@ import (
 	"os"
 )
 
+// Executes the creation of the Golang Function
 func InitializeGoFunction(function *Function, schema *Schema){
 	if !exists(function.AbsPath()) {
 		err := os.MkdirAll(function.AbsPath(), os.ModePerm)
@@ -38,6 +39,7 @@ func InitializeGoFunction(function *Function, schema *Schema){
 	fmt.Println(`Your Function is ready at` + function.AbsPath())
 }
 
+// Creates go specific Docker file
 func createGoDockerfile(function *Function) {
 	dockerTemplate := `FROM golang:alpine as builder
 RUN apk update && apk add git
@@ -57,6 +59,7 @@ ENTRYPOINT [ "/r3x-golang-showcase" ]`
 	createFile(function, dockerTemplate, "Dockerfile")
 }
 
+// Creates go main func file
 func createGoMain(function *Function){
 	goTemplate := `package main
 

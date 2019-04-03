@@ -18,8 +18,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
-	"strings"
 )
 
 // Function type
@@ -51,14 +49,6 @@ func NewFunction(functionName string) *Function {
 	return f
 }
 
-func trimSrcPath(absPath, srcPath string) string {
-	relPath, err := filepath.Rel(srcPath, absPath)
-	if err != nil {
-		fmt.Println(err)
-	}
-	return relPath
-}
-
 // AbsPath returns Functions absolute path
 func (f Function) AbsPath() string {
 	return f.absPath
@@ -67,15 +57,4 @@ func (f Function) AbsPath() string {
 // SrcPath returns Functions source path
 func (f *Function) SrcPath() string {
 	return f.srcPath
-}
-
-func filepathHasPrefix(path string, prefix string) bool {
-	if len(path) <= len(prefix) {
-		return false
-	}
-	if runtime.GOOS == "windows" {
-		return strings.EqualFold(path[0:len(prefix)], prefix)
-	}
-
-	return path[0:len(prefix)] == prefix
 }
