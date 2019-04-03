@@ -53,10 +53,14 @@ func LoadSchema() Schema {
 	if err != nil {
 		log.Print(err)
 	}
+	var schema Schema
+
+	if wd == "" {
+		return schema
+	}
 	file := wd + "/schema.json"
 	fmt.Println(file)
 
-	var schema Schema
 	schemaFile, err := os.Open(file)
 	defer schemaFile.Close()
 

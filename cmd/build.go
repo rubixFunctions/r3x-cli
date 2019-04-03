@@ -76,7 +76,7 @@ func create(name string, push bool, quay bool) {
 	}
 	funcName := getName()
 	if funcName == "" {
-		panic("A function needs a name")
+		fmt.Println("A function needs a name")
 		return
 	}
 	pass := getPass()
@@ -180,7 +180,11 @@ func getPass() string {
 }
 
 func getName() string {
-	return LoadSchema().Name
+	var name = LoadSchema().Name
+	if name == ""{
+		return ""
+	}
+	return name
 }
 
 
