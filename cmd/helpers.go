@@ -210,3 +210,7 @@ var logo =`
 		\_| \_\__,_|_.__/|_\/   \/
 
 `
+
+func initString(t string) {
+	fmt.Println(fmt.Sprintf("Building %v Scaffolding", t))
+}

@@ -29,12 +29,12 @@ var initCmd = &cobra.Command{
 	Use:     "init [function name]",
 	Aliases: []string{"initialize", "initialise", "create"},
 	Short:   "Initialize a Function as a Container",
-	Long: `Initialize (r3x init) will create a new Function as a container, 
+	Long: fmt.Sprintf(`%v Initialize (r3x init) will create a new Function as a container, 
 with a license and the appropriate structure needed for a Knative Function.
 
 	- If an absolute path is provided, it will be created.
 	
-Init will not use an existing directory with contents.`,
+Init will not use an existing directory with contents.`, logo),
 	Run: func(cmd *cobra.Command, args []string) {
 		// get flag values
 		license := cmd.Flag("license").Value.String()
@@ -46,11 +46,12 @@ Init will not use an existing directory with contents.`,
 				log.Print(err)
 			}
 			// Switch on different function type flag
+			fmt.Println("Checking Params")
 			switch name {
 			case "js":
 				var function *Function
 				if len(args) == 0 {
-					fmt.Println("Function name needed")
+					fmt.Println("A Function needs a name")
 				} else if len(args) == 1 {
 					arg := args[0]
 					if arg[0] == '.' {
@@ -60,12 +61,13 @@ Init will not use an existing directory with contents.`,
 					function.license.Name = license
 					var schema *Schema
 					schema = NewSchema("r3x-"+arg, "js", "json")
+					initString("JavaScript")
 					InitializeJSFunction(function, schema)
 				}
 			case "go":
 				var function *Function
 				if len(args) == 0 {
-					fmt.Println("Function name needed")
+					fmt.Println("A Function needs a name")
 				} else if len(args) == 1 {
 					arg := args[0]
 					if arg[0] == '.' {
@@ -75,12 +77,13 @@ Init will not use an existing directory with contents.`,
 					function.license.Name = license
 					var schema *Schema
 					schema = NewSchema("r3x-"+arg, "go", "json")
+					initString("GoLang")
 					InitializeGoFunction(function, schema)
 				}
 			case "py":
 				var function *Function
 				if len(args) == 0 {
-					fmt.Println("Function name needed")
+					fmt.Println("A Function needs a name")
 				} else if len(args) == 1 {
 					arg := args[0]
 					if arg[0] == '.' {
@@ -90,6 +93,7 @@ Init will not use an existing directory with contents.`,
 					function.license.Name = license
 					var schema *Schema
 					schema = NewSchema("r3x-"+arg, "py", "json")
+					initString("Python")
 					InitializePyFunction(function, schema)
 				}
 			default:
