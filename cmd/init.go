@@ -96,6 +96,22 @@ Init will not use an existing directory with contents.`, logo),
 					initString("Python")
 					InitializePyFunction(function, schema)
 				}
+			case "hs":
+				var function *Function
+				if len(args) == 0 {
+					fmt.Println("A Function needs a name")
+				} else if len(args) == 1 {
+					arg := args[0]
+					if arg[0] == '.'{
+						arg = filepath.Join(wd, arg)
+					}
+					function = NewFunction(arg)
+					function.license.Name = license
+					var schema *Schema
+					schema = NewSchema("r3x-"+arg, "hs", "json")
+					initString("Haskell")
+					InitializeHaskellFunction(function, schema)
+				}
 			default:
 				fmt.Println(warningTypeMessage)
 			}

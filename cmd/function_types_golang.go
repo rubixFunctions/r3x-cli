@@ -28,7 +28,7 @@ func InitializeGoFunction(function *Function, schema *Schema){
 			return
 		}
 	} else if !isEmpty(function.AbsPath()) {
-		fmt.Println("Function can not be bootstrapped in a non empty direcctory: " + function.AbsPath())
+		fmt.Println("Function can not be bootstrapped in a non empty directory: " + function.AbsPath())
 		return
 	}
 
