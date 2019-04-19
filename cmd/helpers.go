@@ -198,6 +198,19 @@ spec:
 		fmt.Println(err)
 	}
 
-	fmt.Println("service.yaml generated")
+	fmt.Println("Push completed and service.yaml generated")
 }
 
+var logo =`
+		______      _     ___   __
+		| ___ \    | |   (_) \ / /
+		| |_/ /   _| |__  _ \ V / 
+		|    / | | | '_ \| |/   \ 
+		| |\ \ |_| | |_) | / /^\ \
+		\_| \_\__,_|_.__/|_\/   \/
+
+`
+
+func initString(t string) {
+	fmt.Println(fmt.Sprintf("Building %v Scaffolding", t))
+}
