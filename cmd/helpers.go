@@ -198,7 +198,7 @@ spec:
 		fmt.Println(err)
 	}
 
-	fmt.Println("service.yaml generated")
+	fmt.Println("Push completed and service.yaml generated")
 }
 
 var logo =`

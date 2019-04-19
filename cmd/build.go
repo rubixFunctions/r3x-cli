@@ -72,6 +72,7 @@ func init() {
 
 // Create function, builds tar of directory and execute Build Function
 func create(name string, push bool, quay bool) {
+	fmt.Println("RubiX is starting to build function image")
 	wd, err := os.Getwd()
 	if err != nil {
 		panic(err)
@@ -82,6 +83,7 @@ func create(name string, push bool, quay bool) {
 		return
 	}
 	pass := getPass()
+	fmt.Println("Creating function tar")
 	tar := new(archivex.TarFile)
 	err = tar.Create("/tmp/archieve.tar")
 	if  err != nil {
@@ -105,7 +107,6 @@ func create(name string, push bool, quay bool) {
 	defer dockerBuildContext.Close()
 
 	cli, _ := client.NewClientWithOpts(client.FromEnv)
-
 	buildImage(imageName, cli, dockerBuildContext)
 
 	if push {
@@ -177,7 +178,7 @@ func genServiceYaml(name string, image string){
 
 // Get user password
 func getPass() string {
-	fmt.Print("Enter Password: ")
+	fmt.Print("Enter Password for Image Hub: ")
 	bytePass, err := terminal.ReadPassword(int(syscall.Stdin))
 	if err != nil {
 		panic(err)
