@@ -130,7 +130,8 @@ var warningTypeMessage = `Function type required, use '-t' flag
 	Supported paradigms :
 		- JavaScript : '-t js'
 		- GoLang : '-t go'
-		- Python : '-t py'`
+		- Python : '-t py'
+		- Haskell : '-t hs'`
 
 // Init Init Function
 func init() {
