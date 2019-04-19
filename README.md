@@ -46,6 +46,7 @@ RubiX supports the following:
 - JavaScript : `--type js`
 - Golang : `--type go`
 - Python : `--type py`
+- Haskell : `--type hs`
 
 ### Create a Function as a Container Image
 The create function image locally:

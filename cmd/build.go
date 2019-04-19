@@ -171,6 +171,8 @@ func genServiceYaml(name string, image string){
 		createServiceYAML(name, image)
 	case "py":
 		createServiceYAML(name, image)
+	case "hs":
+		createServiceYAML(name, image)
 	default:
 		fmt.Println("Error parsing Schema, no service.yaml generated")
 	}
