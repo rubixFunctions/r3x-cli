@@ -65,11 +65,13 @@ CMD [ "npm", "start" ]`
 func createJSMain(function *Function){
 	jSTemplate := `const r3x = require('@rubixfunctions/r3x-js-sdk')
 
-let schema
+/**
+ * Simply pass your logic to 'r3x execute'
+ */
 r3x.execute(function(){
 	let response = {'message' : 'Hello r3x function'}
 	return response 
-}, schema)`
+})`
 	createFile(function, jSTemplate, "r3x-func.js")
 }
 
